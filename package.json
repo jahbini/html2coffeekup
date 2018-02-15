@@ -3,9 +3,9 @@
   "description": "Converts HTML to Coffeekup markup",
   "author": "Brandon Bloom <brandon@brandonbloom.name>",
   "version": "1.4.0",
-  "repository" : {
-    "type" : "git",
-    "url" : "git://github.com/brandonbloom/html2coffeekup.git"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/brandonbloom/html2coffeekup.git"
   },
   "keywords": [
     "coffeekup"
@@ -15,8 +15,9 @@
   },
   "main": "./lib/convert.coffee",
   "dependencies": {
+    "coffee-script": ">= 1.1.1",
     "htmlparser": ">= 1.7.3",
-    "coffee-script": ">= 1.1.1"
+    "underscore": "^1.8.3"
   },
   "engines": {
     "node": ">= 0.4.7"

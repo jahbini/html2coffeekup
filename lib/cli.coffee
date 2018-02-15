@@ -19,6 +19,7 @@ exports.main = ->
         --no-selectors      Disables output of css-selectors for id and classes
         --export[=<name>]   Wraps the output in a Node.js style export
         --no-export         Disables wrapping the output in an export (default)
+        --extends=<name>    sets base class or extends base class
     """
     process.exit 1
 
@@ -26,6 +27,7 @@ exports.main = ->
   export_ = null
   selectors = null
   sourceFile = null
+  baseClass = ""
 
   for arg in args
     match = arg.match(/^--([a-z-]+)(=(.+))?$/i)
@@ -53,6 +55,8 @@ exports.main = ->
         when 'no-selectors'
           rejectValue()
           selectors = false
+        when 'extends'
+          baseClass = value
         when 'export'
           export_ = value ? true
         when 'no-export'
@@ -70,6 +74,6 @@ exports.main = ->
     usage()
 
   html = fs.readFileSync sourceFile, 'utf8'
-  options = {prefix, selectors, export: export_}
+  options = {prefix, selectors, export: export_, baseClass }
   convert html, process.stdout, options, (err) ->
     console.error err if err

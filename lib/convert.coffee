@@ -1,29 +1,41 @@
-{inspect} = require 'util'
+# extract html generating teacup signatures for web site bamboosnow.com
+#
+_ = require 'underscore'
 htmlparser = require 'htmlparser'
 
 stringLiteral = (html) ->
-  inspect html.trim()
+  if html.match '\n'
+    '"""\n' + html.trim() + '\n"""'
+  else
+    '"' + html.trim() + '"'
 
 exports.convert = (html, stream, options, callback) ->
+  emitting = false
 
   if typeof options == 'function'
     [options, callback] = [{}, options]
   if not callback
     callback = (->)
 
+  boilerPlate = _([ 'html','bamboosnow_body','celarien_body','stjohnsjim_body','container','footer','footer_info', 'story','sidebar','header','sidecar','fb_status','header_inner','main_nav','main_nav_toggle','banner']).sortBy()
+  allMeta = []
+  htmlTitle = "No Title"
+  sections = {}
+  toDo = []
   prefix = options.prefix ? ''
   selectors = options.selectors ? true
-  export_ = options.export ? false
+  export_ = options.export ? 'theStory'
+  baseClass = options.baseClass 
 
   depth = 0
 
   emit = (code) ->
-    stream.write Array(depth + 1).join('  ') + code + '\n'
+    stream.write Array(depth + 1).join('  ') + code + '\n' if emitting 
 
   nest = (fn) ->
-    depth++
+    depth++ if emitting
     result = fn()
-    depth--
+    depth-- if emitting
     result
 
   visit =
@@ -31,7 +43,14 @@ exports.convert = (html, stream, options, callback) ->
     node: (node) ->
       visit[node.type](node)
 
+    namedArray: (id,array) ->
+      emit id + ': =>'
+      nest -> visit.array array
+
     array: (array) ->
+      if !array
+        emit 'return'
+        return
       for node in array
         visit.node node
 
@@ -53,15 +72,21 @@ exports.convert = (html, stream, options, callback) ->
         if selectors and (id or cls)
           selector = ''
           selector += "##{id}" if id
-          selector += ".#{cls.replace(' ', '.')}" if cls
-          code += " '#{selector}'"
+          selector += ".#{cls.replace(/ /g, '.')}" if cls
+          code += " \"#{selector}\""
           called = true
         for key, value of tag.attribs
           attribs.push [key, value]
 
+      # collect meta attributes
+      allMeta.push attribs if tag.name == 'meta'
+
       # Render attributes
       attribs = for [key, value] in attribs
+        key = '"'+ key + '"' if key.match '-'
         " #{key}: #{stringLiteral value}"
+
+      code += ',' if selector && attribs.length > 0 
       code += attribs.join(',')
       called ||= attribs.length > 0
 
@@ -71,11 +96,23 @@ exports.convert = (html, stream, options, callback) ->
           code += ',' if called
           code += suffix
         emit code
+      if id
+        id = id.replace /-/g,'_'
+        endTag " @#{id}"
+        sections[id] = tag.children
+        toDo.push id
+        return
+
       if (children = tag.children)?
         if children.length == 1 and children[0].type == 'text'
-          endTag " #{stringLiteral children[0].data}"
+          child = children[0].data
+          if tag.name == 'script'
+            endTag " #{stringLiteral child.replace /"/g,'\\"'}"
+          else
+            endTag " => T.raw #{stringLiteral child}"
+            htmlTitle = stringLiteral child if tag.name == 'title'
         else
-          endTag ' ->'
+          endTag ' =>'
           nest -> visit.array children
       else if called
         endTag()
@@ -84,13 +121,13 @@ exports.convert = (html, stream, options, callback) ->
 
     text: (text) ->
       return if text.data.match /^\s*$/
-      emit "#{prefix}text #{stringLiteral text.data}"
+      emit "#{prefix}raw #{stringLiteral text.data}"
 
     directive: (directive) ->
       if directive.name.toLowerCase() == '!doctype'
-        emit "#{prefix}doctype TODO" #TODO: Extract doctype
+        emit "#{prefix}doctype '#{(directive.data.split ' ')[1]}'" #TODO: Extract doctype
       else
-        console.error "Unknown directive: #{inspect directive.name}"
+        console.error "Unknown directive: #{directive.name}"
 
     comment: (comment) ->
       emit "#{prefix}comment #{stringLiteral comment.data}"
@@ -103,18 +140,38 @@ exports.convert = (html, stream, options, callback) ->
 
   handler = new htmlparser.DefaultHandler (err, dom) =>
     return callback err if err
+    sections['html'] = dom
+    toDo.push 'html'
+    emitting = true
+    emit "T = require 'halvalla'"
+    emit "# "
+    if !baseClass
+      emit "module.exports = class #{export_}"
+    else
+      emit "#{baseClass} = require './#{baseClass}.coffee'"
+      emit "class #{export_} extends #{baseClass}"
+    depth = 1
     try
-      if export_
-        if export_ == true
-          emit 'module.exports = ->'
+      while sectionName = toDo.pop()
+        if baseClass 
+          emitting = 0 > (_.indexOf boilerPlate, sectionName )
         else
-          emit "exports.#{export_} = ->"
-        nest -> visit.array dom
-      else
-        visit.array dom
+          emitting = 0 < (_.indexOf boilerPlate, sectionName )
+        emit "# "
+        emit "# section #{sectionName}"
+        emit "# "
+        visit.namedArray sectionName, sections[sectionName]
+      emitting = true
+      emit "allMeta = #{JSON.stringify allMeta}"
+      emit "htmlTitle = #{htmlTitle}"
+      depth = 0
+      if baseClass
+        emit "page = new #{export_}"
+        emit "console.log T.render page.html"
     catch exception
       err = exception
     callback err
+    return
 
   try
     parser = new htmlparser.Parser(handler)
