@@ -20,6 +20,7 @@ exports.convert = (html, stream, options, callback) ->
   boilerPlate = _([ 'html','bamboosnow_body','celarien_body','stjohnsjim_body','container','footer','footer_info', 'story','sidebar','header','sidecar','fb_status','header_inner','main_nav','main_nav_toggle','banner']).sortBy()
   allMeta = []
   htmlTitle = "No Title"
+  sectionName = ""
   sections = {}
   toDo = []
   prefix = options.prefix ? ''
@@ -45,7 +46,10 @@ exports.convert = (html, stream, options, callback) ->
 
     namedArray: (id,array) ->
       emit id + ': =>'
-      nest -> visit.array array
+      if array.type
+        nest -> visit.tag array
+      else
+        nest -> visit.array array
 
     array: (array) ->
       if !array
@@ -54,18 +58,22 @@ exports.convert = (html, stream, options, callback) ->
       for node in array
         visit.node node
 
-    tag: (tag) ->
+    tag: (tag,debug = false) ->
       code = prefix + tag.name
       called = false
 
       # Force attribute ordering of `id`, `class`, then others.
       attribs = []
+      
       if tag.attribs?
+        tAttribs = {}
+        for key,value of tag.attribs
+          tAttribs[key] = value
         extractAttrib = (key) ->
-          value = tag.attribs[key]
+          value = tAttribs[key]
           if value
             attribs.push [key, value] unless selectors
-            delete tag.attribs[key]
+            delete tAttribs[key]
           value
         id = extractAttrib 'id'
         cls = extractAttrib 'class'
@@ -75,7 +83,7 @@ exports.convert = (html, stream, options, callback) ->
           selector += ".#{cls.replace(/ /g, '.')}" if cls
           code += " \"#{selector}\""
           called = true
-        for key, value of tag.attribs
+        for key, value of tAttribs
           attribs.push [key, value]
 
       # collect meta attributes
@@ -98,10 +106,11 @@ exports.convert = (html, stream, options, callback) ->
         emit code
       if id
         id = id.replace /-/g,'_'
-        endTag " @#{id}"
-        sections[id] = tag.children
-        toDo.push id
-        return
+        if id != sectionName
+          emit "@#{id}()"
+          sections[id] = tag
+          toDo.push id
+          return
 
       if (children = tag.children)?
         if children.length == 1 and children[0].type == 'text'
@@ -143,20 +152,20 @@ exports.convert = (html, stream, options, callback) ->
     sections['html'] = dom
     toDo.push 'html'
     emitting = true
-    emit "T = require 'halvalla'"
     emit "# "
     if !baseClass
+      emit "T = require 'halvalla'"
       emit "module.exports = class #{export_}"
     else
-      emit "#{baseClass} = require './#{baseClass}.coffee'"
+      # assume the concatenation of coffee-script input so baseClass is defined
       emit "class #{export_} extends #{baseClass}"
     depth = 1
     try
       while sectionName = toDo.pop()
+        emitting = -1 < (_.indexOf boilerPlate, sectionName )
         if baseClass 
-          emitting = 0 > (_.indexOf boilerPlate, sectionName )
-        else
-          emitting = 0 < (_.indexOf boilerPlate, sectionName )
+          emitting = !emitting
+        emitting = true
         emit "# "
         emit "# section #{sectionName}"
         emit "# "
