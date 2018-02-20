@@ -173,7 +173,7 @@ exports.convert = (html, stream, options, callback) ->
       #wrap up
       emitting = true
       emit "allMeta = #{JSON.stringify allMeta}"
-      emit "htmlTitle = #{htmlTitle}"
+      emit "htmlTitle = #{stringLiteral htmlTitle}"
       depth = 0
       if baseClass
         emit "page = new #{export_}"
