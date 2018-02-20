@@ -19,7 +19,7 @@ exports.convert = (html, stream, options, callback) ->
 
   boilerPlate = _([ 'html','bamboosnow_body','celarien_body','stjohnsjim_body','container','footer','footer_info', 'story','sidebar','header','sidecar','fb_status','header_inner','main_nav','main_nav_toggle','banner']).sortBy()
   allMeta = []
-  htmlTitle = ""
+  htmlTitle = '""'
   sectionName = ""
   sections = {}
   toDo = []
@@ -173,7 +173,7 @@ exports.convert = (html, stream, options, callback) ->
       #wrap up
       emitting = true
       emit "allMeta = #{JSON.stringify allMeta}"
-      emit "htmlTitle = #{stringLiteral htmlTitle}"
+      emit "htmlTitle = #{htmlTitle}"
       depth = 0
       if baseClass
         emit "page = new #{export_}"
