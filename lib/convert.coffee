@@ -162,14 +162,15 @@ exports.convert = (html, stream, options, callback) ->
     depth = 1
     try
       while sectionName = toDo.pop()
-        emitting = -1 < (_.indexOf boilerPlate, sectionName )
-        if baseClass 
-          emitting = !emitting
         emitting = true
         emit "# "
         emit "# section #{sectionName}"
         emit "# "
+        emitting = -1 < (_.indexOf boilerPlate, sectionName )
+        if baseClass 
+          emitting = !emitting
         visit.namedArray sectionName, sections[sectionName]
+      #wrap up
       emitting = true
       emit "allMeta = #{JSON.stringify allMeta}"
       emit "htmlTitle = #{htmlTitle}"
