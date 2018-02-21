@@ -80,7 +80,10 @@ exports.convert = (html, stream, options, callback) ->
         if selectors and (id or cls)
           selector = ''
           selector += "##{id}" if id
-          selector += ".#{cls.replace(/ /g, '.')}" if cls
+          if cls
+            # remove duplicate class names
+            cls=_(cls.split(' ')).uniq().join ' '
+            selector += ".#{cls.replace(/ /g, '.')}"
           code += " \"#{selector}\""
           called = true
         for key, value of tAttribs
