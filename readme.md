@@ -15,27 +15,27 @@ html2coffeekup test/simple.html
 # Example Output (for above usage)
 
 ```
-doctype TODO
-html ->
-  head ->
-    title 'A simple test page'
-    style type: 'text/css', '.foo {\n        color: red\n      }'
-  body '.awesome', ->
-    div '#root.super.special', ->
-      comment 'This page is rapidly becoming not-so-simple'
-      h1 'A simple test page'
-      p ->
-        text 'With some awesome text, and a'
-        a href: 'http://www.google.com', 'link'
-        text '.'
-      p '#paragraph_2', ->
-        text 'And here is an image:'
-        img src: 'fake/source', title: 'not really'
-        text 'As well as a disabled select:'
-        select disabled: 'disabled', ->
-          option 'Oh boy!'
-      script type: 'text/javascript', 'console.log("Hello there");\n        console.log("How\'s it going?");'
-      span()
+T.doctype TODO
+T.html ->
+  T.head ->
+    T.title 'A simple test page'
+    T.style type: 'text/css', '.foo {\n        color: red\n      }'
+  T.body '.awesome', ->
+    T.div '#root.super.special', ->
+      T.comment 'This page is rapidly becoming not-so-simple'
+      T.h1 'A simple test page'
+      T.p ->
+        T.text 'With some awesome text, and a'
+        T.a href: 'http://www.google.com', 'link'
+        T.text '.'
+      T.p '#paragraph_2', ->
+        T.text 'And here is an image:'
+        T.img src: 'fake/source', title: 'not really'
+        T.text 'As well as a disabled select:'
+        T.select disabled: 'disabled', ->
+          T.option 'Oh boy!'
+      T.script type: 'text/javascript', 'console.log("Hello there");\n        console.log("How\'s it going?");'
+      T.span()
 ```
 
 # Full Command Line Usage
@@ -43,17 +43,18 @@ html ->
 ```
 html2coffeekup [options] <html-file>
 
---prefix=<string>   Prepends a string to each element function call
---no-prefix         Disables prefix (default)
---selectors         Output css-selectors for id and classes (default)
---no-selectors      Disables output of css-selectors for id and classes
---export[=<name>]   Wraps the output in a Node.js style export
---no-export         Disables wrapping the output in an export (default)
+--prefix=<string>    Prepends a string to each element function call default 'T.'
+--selectors          Output css-selectors for id and classes (default)
+--no-selectors       Disables output of css-selectors for id and classes
+--s=slug             creates output directory for contents
+--b=breakoutId       break tag with id to separate havalla source
+--m=matchtext        exact match for text in html -- inserts 'id="b-value' in html tag
 ```
+--
 
 See "Supported options" below for additional details.
 
-# Public API
+# internal API
 
 `convert(html, stream, [options], [callback])`
 
@@ -67,7 +68,7 @@ See "Supported options" below for additional details.
 
 ### Supported options:
 
-* `prefix` prepends a string to the begining of each element functional call. (default: `''`)
+* `prefix` prepends a string to the begining of each element functional call. (default: `'T.'`)
 
 > For example, using the prefix `@` would result in `@body ->`.
 
@@ -75,16 +76,15 @@ See "Supported options" below for additional details.
 
 > For example, when true you get `div '#id.cls1.cls2`. When false you get `div id: "id", class: "cls1 cls2"`
 
-*  `exports` is a boolean or a string name. When truthy, wraps the output in a Node.js style function export. (default: `false`).
+*  `b` is a string. The HTML tag with that id is directed to a new halvalla source class and file in the slug directory
+> example '--b=bloviation' will direct a `<tag ID='bloviation' ...`
+to a new file in the slug directory wrapped in a class statement
 
-> When `true` you get `module.exports = ->`. When a `"foo"` you get `exports.foo = ->`
+*  `m` is a string that matches the original html text and inserts an ID into a tag that can only be described by it's actual text of classnames.
 
 # Example REPL Session
+*  `bin/html2coffeekup --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class="large-8 columns"' --s=blov  test/bs.html`
+*  will match the '<header' text in the html and replace it with `<header id="#{option b.value}" <header id=header
+*  this will decode an html file into four separate files named html.coffee, header.coffee, footer.coffee and bloviation.coffee
+*  If the id for 'bloviation' already exists in the html file, the '-m' option is not needed.
 
-```
-coffee> {convert} = require('html2coffeekup')
-{ convert: [Function] }
-coffee> convert '<a href="http://www.github.com">Github</a>', process.stdout, -> console.log 'done!'
-a href: 'http://www.github.com', 'Github'
-done!
-```

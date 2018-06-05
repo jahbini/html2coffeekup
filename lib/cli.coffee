@@ -20,14 +20,20 @@ exports.main = ->
         --export[=<name>]   Wraps the output in a Node.js style export
         --no-export         Disables wrapping the output in an export (default)
         --extends=<name>    sets base class or extends base class
+        --b=name            breakout subsection as new class, may be repeated
+        --m=string          matches exact text in source tag to add --b ID to tag
+        --s=slug            name the output directory
     """
     process.exit 1
 
-  prefix = null
+  prefix = 'T.'
   export_ = null
   selectors = null
   sourceFile = null
+  matchers = []
   baseClass = ""
+  doThese = ['html']
+  slug = 'subdirectory'
 
   for arg in args
     match = arg.match(/^--([a-z-]+)(=(.+))?$/i)
@@ -43,12 +49,19 @@ exports.main = ->
           console.log "Expected value for switch #{key}"
           process.exit 1
       switch key
+        when 's'
+          requireValue()
+          slug = value
+        when 'b'
+          requireValue()
+          doThese.push value
+        # search and replace in source html with #id from last 'b' break
+        when 'm'
+          requireValue()
+          matchers.push search: value, repl: doThese[doThese.length-1]
         when 'prefix'
           requireValue()
           prefix = value
-        when 'no-prefix'
-          rejectValue()
-          prefix = null
         when 'selectors'
           rejectValue()
           selectors = true
@@ -57,6 +70,9 @@ exports.main = ->
           selectors = false
         when 'extends'
           baseClass = value
+        when 'slug'
+          requireValue()
+          directoryName = value
         when 'export'
           export_ = value ? true
         when 'no-export'
@@ -74,6 +90,25 @@ exports.main = ->
     usage()
 
   html = fs.readFileSync sourceFile, 'utf8'
-  options = {prefix, selectors, export: export_, baseClass }
-  convert html, process.stdout, options, (err) ->
-    console.error err if err
+  for replacer in matchers
+    html = html.replace replacer.search, "#{replacer.search} id=#{replacer.repl}" 
+  options = {prefix, selectors, export: export_, doThese, baseClass, slug: slug }
+  if options.slug
+    try
+      fs.mkdirSync options.slug
+    catch badDog
+      console.error "BADDOG",badDog
+  outputStream = null
+  options.baseClass = ""
+  for itemIn in doThese
+    options.doMe = itemIn
+    options.export = "C_#{itemIn}"
+    outputStream.end() if outputStream != null
+    outputStream = fs.createWriteStream "./#{options.slug}/#{itemIn}.coffee"
+    convert html, outputStream, options, (err) ->
+      console.error err if err
+    options.baseClass = options.export
+  outputStream.write "allMeta = #{JSON.stringify options.allMeta}\n"
+  outputStream.write "htmlTitle = #{options.htmlTitle}\n"
+  outputStream.end()
+  

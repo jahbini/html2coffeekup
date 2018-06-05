@@ -9,21 +9,30 @@ stringLiteral = (html) ->
   else
     '"' + html.trim() + '"'
 
+stringLiteral2 = (html) ->
+  if html.match '\n'
+    '"""\n' + "'"+html.trim()+"'" + '\n"""'
+  else
+    "'" + html.trim() + "'"
+
 exports.convert = (html, stream, options, callback) ->
-  emitting = false
+  emitting = true
+  isEmitting = ->
+    emitting
+    
+  printBaby = {}
 
   if typeof options == 'function'
     [options, callback] = [{}, options]
   if not callback
     callback = (->)
 
-  boilerPlate = _([ 'html','bamboosnow_body','celarien_body','stjohnsjim_body','container','footer','footer_info', 'story','sidebar','header','sidecar','fb_status','header_inner','main_nav','main_nav_toggle','banner']).sortBy()
   allMeta = []
   htmlTitle = '""'
   sectionName = ""
   sections = {}
   toDo = []
-  prefix = options.prefix ? ''
+  prefix = options.prefix ? 'T.'
   selectors = options.selectors ? true
   export_ = options.export ? 'theStory'
   baseClass = options.baseClass 
@@ -31,12 +40,12 @@ exports.convert = (html, stream, options, callback) ->
   depth = 0
 
   emit = (code) ->
-    stream.write Array(depth + 1).join('  ') + code + '\n' if emitting 
+    stream.write Array(depth + 1).join('  ') + code + '\n' if isEmitting() 
 
   nest = (fn) ->
-    depth++ if emitting
+    depth++ if isEmitting()
     result = fn()
-    depth-- if emitting
+    depth-- if isEmitting()
     result
 
   visit =
@@ -100,7 +109,7 @@ exports.convert = (html, stream, options, callback) ->
       code += ',' if selector && attribs.length > 0 
       code += attribs.join(',')
       called ||= attribs.length > 0
-
+      
       # Render content
       endTag = (suffix) =>
         if suffix
@@ -113,6 +122,10 @@ exports.convert = (html, stream, options, callback) ->
           emit "@#{id}()"
           sections[id] = tag
           toDo.push id
+          #console.log "PUSHING",id, "Emitting = ",isEmitting()
+          #pass the print enable on, unless this section is specifically optioned
+          # in that case, we are already printing it, or we should not during this pass
+          printBaby[id] = isEmitting() unless id in options.doThese
           return
 
       if (children = tag.children)?
@@ -142,7 +155,7 @@ exports.convert = (html, stream, options, callback) ->
         console.error "Unknown directive: #{directive.name}"
 
     comment: (comment) ->
-      emit "#{prefix}comment #{stringLiteral comment.data}"
+      emit "#{prefix}comment #{stringLiteral2 comment.data}"
 
     script: (script) ->
       visit.tag script #TODO: Something better
@@ -154,33 +167,38 @@ exports.convert = (html, stream, options, callback) ->
     return callback err if err
     sections['html'] = dom
     toDo.push 'html'
-    emitting = true
     emit "# "
     if !baseClass
       emit "T = require 'halvalla'"
       emit "module.exports = class #{export_}"
+      emit "  #pass the db entry into the class so that the classes have access to it"
+      emit "  constructor: (@db,@allDB)->"
+      emit "    return"
+      emit ""
     else
       # assume the concatenation of coffee-script input so baseClass is defined
-      emit "class #{export_} extends #{baseClass}"
+      emit "renderer = class #{export_} extends #{baseClass}"
+    for noPrint in options.doThese
+      printBaby[noPrint] = false
+    printBaby[options.doMe]=true
     depth = 1
     try
       while sectionName = toDo.pop()
-        emitting = true
+        emitting=true
         emit "# "
         emit "# section #{sectionName}"
         emit "# "
-        emitting = -1 < (_.indexOf boilerPlate, sectionName )
-        if baseClass 
-          emitting = !emitting
+        emitting = printBaby[sectionName]  # turn code emission on
+        #console.log "SECTION",sectionName, printBaby
         visit.namedArray sectionName, sections[sectionName]
+          
       #wrap up
       emitting = true
-      emit "allMeta = #{JSON.stringify allMeta}"
-      emit "htmlTitle = #{htmlTitle}"
+      #emit "allMeta = #{JSON.stringify allMeta}"
+      #emit "htmlTitle = #{htmlTitle}"
+      options.allMeta = allMeta
+      options.htmlTitle = htmlTitle
       depth = 0
-      if baseClass
-        emit "page = new #{export_}"
-        emit "console.log T.render page.html"
     catch exception
       err = exception
     callback err

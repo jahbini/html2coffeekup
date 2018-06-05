@@ -13,6 +13,9 @@
   "bin": {
     "html2coffeekup": "./bin/html2coffeekup"
   },
+  "scripts": {
+  "decode": "rm -rf test/blov; bin/html2coffeekup --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class=\"large-8 columns\"' --s=test/blov  test/bs.html"
+  },
   "main": "./lib/convert.coffee",
   "dependencies": {
     "coffee-script": ">= 1.1.1",
