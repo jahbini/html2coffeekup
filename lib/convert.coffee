@@ -4,15 +4,18 @@ _ = require 'underscore'
 htmlparser = require 'htmlparser'
 
 stringLiteral = (html) ->
-  if html.match '"'
-    return stringLiteral2 html
-  if html.match '\n'
+  hasNewline = !!html.match '\n'
+  hasSingleQuotes = !!html.match "'"
+  hasDoubleQuotes = !!html.match '"'
+  
+  if hasNewline || hasDoubleQuotes || hasSingleQuotes
     '"""\n' + html.trim() + '\n"""'
   else
     '"' + html.trim() + '"'
-
+    
+# for strings in comments that have executable code with unescaped quotes
 stringLiteral2 = (html) ->
-  if html.match '\n'
+  if !!html.match '\n'
     '"""\n' + "'"+html.trim()+"'" + '\n"""'
   else
     "'" + html.trim() + "'"

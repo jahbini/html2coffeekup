@@ -23,6 +23,7 @@ exports.main = ->
         --b=name            breakout subsection as new class, may be repeated
         --m=string          matches exact text in source tag to add --b ID to tag
         --s=slug            name the output directory
+        --selfTest          append code to render the coffeekup template for test
     """
     process.exit 1
 
@@ -34,6 +35,7 @@ exports.main = ->
   baseClass = ""
   doThese = ['html']
   slug = 'subdirectory'
+  selfTest = false
 
   for arg in args
     match = arg.match(/^--([a-z-]+)(=(.+))?$/i)
@@ -49,6 +51,8 @@ exports.main = ->
           console.log "Expected value for switch #{key}"
           process.exit 1
       switch key
+        when 'selfTest'
+          selfTest = true
         when 's'
           requireValue()
           slug = value
@@ -97,7 +101,7 @@ exports.main = ->
     try
       fs.mkdirSync options.slug
     catch badDog
-      console.error "BADDOG",badDog
+      #console.error "BADDOG",badDog
   outputStream = null
   options.baseClass = ""
   for itemIn in doThese
@@ -110,5 +114,8 @@ exports.main = ->
     options.baseClass = options.export
   outputStream.write "allMeta = #{JSON.stringify options.allMeta}\n"
   outputStream.write "htmlTitle = #{options.htmlTitle}\n"
+  if selfTest
+    outputStream.write "page = new module.exports\n"
+    outputStream.write "console.log T.render page.html"
   outputStream.end()
   
