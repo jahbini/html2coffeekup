@@ -24,7 +24,9 @@ renderer = class C_bloviation extends C_footer
             T.em => T.raw "water optional"
             T.raw ", cleaner and polisher for"
             T.a title: "Store", href: "/bamboocando/store", => T.raw "hard surfaces, glass, plastic"
-            T.raw ", hands, skin, hair, fur, brushes and rugs. It is the mechanic's wife's best friend."
+            T.raw """
+, hands, skin, hair, fur, brushes and rugs. It is the mechanic's wife's best friend.
+"""
           T.p => T.raw "Bamboo Snow can be produced in many areas of the world, but Golden Bamboo Snow from the tropic island of Saipan has superior characteristics."
           T.p =>
             T.raw "Simply put, Golden Bamboo Snow"
@@ -35,12 +37,18 @@ renderer = class C_bloviation extends C_footer
             T.raw ". &nbsp;It will absorb the"
             T.a title: "Sweaty Handshake?", href: "/sweaty-handshake", => T.raw "sweat and oil from your hands leaving them dry and smooth"
             T.raw "."
-          T.p => T.raw "Bamboo Snow is so dry that it will turn household waste into garbage jerky and no bacteria can grow, no insect, or vermin will want it. &nbsp;Add water, though, and it will quickly turn into compost for your garden. &nbsp;It controls bacteria in a natural way, so it won't produce high-tech hybred superbugs."
+          T.p => T.raw """
+Bamboo Snow is so dry that it will turn household waste into garbage jerky and no bacteria can grow, no insect, or vermin will want it. &nbsp;Add water, though, and it will quickly turn into compost for your garden. &nbsp;It controls bacteria in a natural way, so it won't produce high-tech hybred superbugs.
+"""
           T.div "._38.direction_ltr", =>
-            T.p => T.raw "It ALSO makes a great additive for construction and creates fire suppressing material for panels and fixtures.&nbsp;Bamboo Snow can suck up 3 times it's weight in glue, and another 2 times it's weight in water. It turn it all into putty which can be molded, extruded, shaped and stuffed into cracks. &nbsp;And then it will clean up the mess in moments."
+            T.p => T.raw """
+It ALSO makes a great additive for construction and creates fire suppressing material for panels and fixtures.&nbsp;Bamboo Snow can suck up 3 times it's weight in glue, and another 2 times it's weight in water. It turn it all into putty which can be molded, extruded, shaped and stuffed into cracks. &nbsp;And then it will clean up the mess in moments.
+"""
             T.p => T.raw "Bamboo Snow will absorb nearly any liquid, and will dehydrate anything you put in it. &nbsp;Keep it dry, and it will provide dry sanitation, keeping harmful bacteria OUT of the water supply. &nbsp;This would be useful anywhere that water is in short supply."
             T.p => T.raw "Bamboo Snow can be produced in South America, Asia, Africa and Oceania. Anyone who has lived in a bamboo structure in the last 10,000 years has been exposed to bamboo snow. &nbsp;Humans are so tolerant of bamboo snow that it has escaped our attention for all that time."
-            T.p => T.raw "And if Bamboo Snow really can help water conservation and human sanitation around the world, that would be an enhancement to civilization, wouldn't it?"
+            T.p => T.raw """
+And if Bamboo Snow really can help water conservation and human sanitation around the world, that would be an enhancement to civilization, wouldn't it?
+"""
             T.p =>
               T.raw "So help the advancement of civilization by buying and using Golden Bamboo Snow. &nbsp;Become a friend of bamboo snow by joining the"
               T.a title: "Modern Marianas", href: "/modern-marianas", => T.raw "Modern Marianas Society"

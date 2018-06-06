@@ -1,6 +1,6 @@
 {
   "name": "html2halvalla",
-  "description": "Converts HTML to Coffeekup markup",
+  "description": "Converts HTML to halvalla markup",
   "author": "James Hinds <jahbini@icloud.com>",
   "contributors": "Brandon Bloom <brandon@brandonbloom.name>",
   "version": "1.5.0",
@@ -14,10 +14,10 @@
     "site-master"
   ],
   "bin": {
-    "html2coffeekup": "./bin/html2coffeekup"
+    "html2halvalla": "./bin/html2halvalla"
   },
   "scripts": {
-    "decode": "rm -rf test/blov; bin/html2coffeekup --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class=\"large-8 columns\"' --s=test/blov  test/bs.html"
+    "decode": "rm -rf test/blov; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class=\"large-8 columns\"' --s=test/blov  test/bs.html"
   },
   "main": "./lib/convert.coffee",
   "dependencies": {

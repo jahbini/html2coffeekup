@@ -3,13 +3,13 @@ Not fully complete, but still a huge time saver. Tested on dozens of files that 
 # Installation
 
 ```
-npm install -g html2coffeekup
+npm install -g html2halvalla
 ```
 
 # Command Line Synopsys
 
 ```
-html2coffeekup test/simple.html
+html2halvalla test/simple.html
 ```
 
 # Example Output (for above usage)
@@ -41,7 +41,7 @@ T.html ->
 # Full Command Line Usage
 
 ```
-html2coffeekup [options] <html-file>
+html2halvalla [options] <html-file>
 
 --prefix=<string>    Prepends a string to each element function call default 'T.'
 --selectors          Output css-selectors for id and classes (default)
@@ -84,7 +84,7 @@ to a new file in the slug directory wrapped in a class statement
 *  `m` is a string that matches the original html text and inserts an ID into a tag that can only be described by it's actual text of classnames.
 
 # Example REPL Session
-*  `bin/html2coffeekup --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class="large-8 columns"' --s=blov  test/bs.html`
+*  `bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class="large-8 columns"' --s=blov  test/bs.html`
 *  will match the '<header' text in the html and replace it with `<header id="#{option b.value}" <header id=header
 *  this will decode an html file into four separate files named html.coffee, header.coffee, footer.coffee and bloviation.coffee
 *  If the id for 'bloviation' already exists in the html file, the '-m' option is not needed.
