@@ -68,6 +68,9 @@ renderer = class C_bloviation extends C_footer
   # section header
   # 
   # 
+  # section badclass
+  # 
+  # 
   # section inlineLogin
   # 
   # 

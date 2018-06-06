@@ -31,6 +31,9 @@ renderer = class C_footer extends C_header
   # section header
   # 
   # 
+  # section badclass
+  # 
+  # 
   # section inlineLogin
   # 
   # 

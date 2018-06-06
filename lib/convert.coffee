@@ -4,6 +4,8 @@ _ = require 'underscore'
 htmlparser = require 'htmlparser'
 
 stringLiteral = (html) ->
+  if html.match '"'
+    return stringLiteral2 html
   if html.match '\n'
     '"""\n' + html.trim() + '\n"""'
   else

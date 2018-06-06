@@ -128,6 +128,9 @@ news about bamboo in the CNMI
   # section header
   # 
   # 
+  # section badclass
+  # 
+  # 
   # section inlineLogin
   # 
   # 

@@ -44,18 +44,23 @@ $(function() {
 });
 """
           @inlineLogin()
-      T.div ".row.nav-container", =>
-        T.div ".large12.columns", =>
-          T.nav ".top-bar.contain-to-grid.centered", "data-topbar": "data-topbar", =>
-            T.ul ".title-area", =>
-              T.li ".name"
-              T.li ".toggle-topbar.menu-icon", =>
-                T.a href: "#", =>
-                  T.span => T.raw "Menu"
-            T.section ".top-bar-section", =>
-              T.ul ".right", =>
-                T.li class: "", =>
-                  T.a href: "/members/", target: "_self", class: "", => T.raw "Members"
+      @badclass()
+  # 
+  # section badclass
+  # 
+  badclass: =>
+    T.div "#badclass.-bad-bad-badrow.nav-container", =>
+      T.div ".large12.columns", =>
+        T.nav ".top-bar.contain-to-grid.centered", "data-topbar": "data-topbar", =>
+          T.ul ".title-area", =>
+            T.li ".name"
+            T.li ".toggle-topbar.menu-icon", =>
+              T.a href: "#", =>
+                T.span => T.raw "Menu"
+          T.section ".top-bar-section", =>
+            T.ul ".right", =>
+              T.li class: "", =>
+                T.a href: "/members/", target: "_self", class: "", => T.raw "Members"
   # 
   # section inlineLogin
   # 
