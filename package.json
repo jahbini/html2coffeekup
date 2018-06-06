@@ -1,12 +1,12 @@
 {
-  "name": "html2coffeekup",
+  "name": "html2halvalla",
   "description": "Converts HTML to Coffeekup markup",
   "author": "James Hinds <jahbini@icloud.com>",
   "contributors": "Brandon Bloom <brandon@brandonbloom.name>",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jahbini/html2coffeekup.git"
+    "url": "git://github.com/jahbini/html2halvalla.git"
   },
   "keywords": [
     "coffeekup",
