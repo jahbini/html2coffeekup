@@ -10,10 +10,10 @@ renderer = class C_header extends C_html
   # section footer
   # 
   # 
-  # section bloviation
+  # section blovi-ation
   # 
   # 
-  # section cai_image_with_caption_216
+  # section cai-image-with-caption-216
   # 
   # 
   # section header

@@ -18,7 +18,7 @@
     "html2halvalla": "./bin/html2halvalla"
   },
   "scripts": {
-    "decode": "rm -rf test/blov; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class=\"large-8 columns\"' --s=test/blov  test/bs.html"
+    "decode": "rm -rf test/blov; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=blovi-ation --m='div class=\"large-8 columns\"' --s=test/blov  test/bs.html"
   },
   "main": "./lib/convert.coffee",
   "dependencies": {

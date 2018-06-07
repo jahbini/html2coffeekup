@@ -86,7 +86,7 @@ $(document).foundation({
             T.li =>
               T.a ".crumb", href: "/", target: "_self", => T.raw "Home"
             T.li => T.raw "Bamboo Snow"
-        @bloviation()
+        @blovi_ation()
         T.div ".large-4.columns.sidebar", =>
           T.div ".ccm-page-list", =>
             T.h3 ".ccm-page-list-title", =>
@@ -119,10 +119,10 @@ news about bamboo in the CNMI
   # section footer
   # 
   # 
-  # section bloviation
+  # section blovi-ation
   # 
   # 
-  # section cai_image_with_caption_216
+  # section cai-image-with-caption-216
   # 
   # 
   # section header

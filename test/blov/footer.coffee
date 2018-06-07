@@ -22,10 +22,10 @@ renderer = class C_footer extends C_header
 
 """
   # 
-  # section bloviation
+  # section blovi-ation
   # 
   # 
-  # section cai_image_with_caption_216
+  # section cai-image-with-caption-216
   # 
   # 
   # section header

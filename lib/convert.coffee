@@ -59,7 +59,8 @@ exports.convert = (html, stream, options, callback) ->
       visit[node.type](node)
 
     namedArray: (id,array) ->
-      emit id + ': =>'
+      idSafe = id.replace /-/g,'_'
+      emit idSafe + ': =>'
       if array.type
         nest -> visit.tag array
       else
@@ -122,9 +123,9 @@ exports.convert = (html, stream, options, callback) ->
           code += suffix
         emit code
       if id
-        id = id.replace /-/g,'_'
+        idSafe = id.replace /-/g,'_'
         if id != sectionName
-          emit "@#{id}()"
+          emit "@#{idSafe}()"
           sections[id] = tag
           toDo.push id
           #console.log "PUSHING",id, "Emitting = ",isEmitting()

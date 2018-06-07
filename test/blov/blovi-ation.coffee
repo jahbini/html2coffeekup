@@ -1,5 +1,5 @@
 # 
-renderer = class C_bloviation extends C_footer
+renderer = class C_blovi-ation extends C_footer
   # 
   # section html
   # 
@@ -10,10 +10,10 @@ renderer = class C_bloviation extends C_footer
   # section footer
   # 
   # 
-  # section bloviation
+  # section blovi-ation
   # 
-  bloviation: =>
-    T.div "#bloviation.large-8.columns", =>
+  blovi_ation: =>
+    T.div "#blovi-ation.large-8.columns", =>
       T.div ".row", =>
         @cai_image_with_caption_216()
         T.div "..omega", =>
@@ -65,7 +65,7 @@ And if Bamboo Snow really can help water conservation and human sanitation aroun
               T.p => T.raw "&nbsp;"
             T.div "._1yr", => T.raw "&nbsp;"
   # 
-  # section cai_image_with_caption_216
+  # section cai-image-with-caption-216
   # 
   cai_image_with_caption_216: =>
     T.div "#cai-image-with-caption-216.large-3.three.columns.alpha.cai-image-with-caption", style: "width: px;", =>
