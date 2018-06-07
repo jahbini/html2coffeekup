@@ -23,7 +23,7 @@ exports.main = ->
         --b=name            breakout subsection as new class, may be repeated
         --m=string          matches exact text in source tag to add --b ID to tag
         --s=slug            name the output directory
-        --selfTest          append code to render the coffeekup template for test
+        --selfTest          append code to render the halvalla template for test
     """
     process.exit 1
 

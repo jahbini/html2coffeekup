@@ -49,7 +49,7 @@ html2halvalla [options] <html-file>
 --s=slug             creates output directory for contents
 --b=breakoutId       break tag with id to separate havalla source
 --m=matchtext        exact match for text in html -- inserts 'id="b-value' in html tag
---selfTest           append code to render the coffeekup template for test
+--selfTest           append code to render the halvalla template for test
 ```
 --
 
