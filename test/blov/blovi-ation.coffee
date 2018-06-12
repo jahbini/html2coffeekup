@@ -10,10 +10,22 @@ renderer = class C_blovi-ation extends C_footer
   # section footer
   # 
   # 
+  # section dicey_3
+  # 
+  # 
+  # section dicey_2
+  # 
+  # 
+  # section dicey_1
+  # 
+  # 
+  # section dicey_0
+  # 
+  # 
   # section blovi-ation
   # 
   blovi_ation: =>
-    T.div "#blovi-ation.large-8.columns", =>
+    T.div "#blovi-ation.columns.large-8", =>
       T.div ".row", =>
         @cai_image_with_caption_216()
         T.div "..omega", =>
@@ -68,7 +80,7 @@ And if Bamboo Snow really can help water conservation and human sanitation aroun
   # section cai-image-with-caption-216
   # 
   cai_image_with_caption_216: =>
-    T.div "#cai-image-with-caption-216.large-3.three.columns.alpha.cai-image-with-caption", style: "width: px;", =>
+    T.div "#cai-image-with-caption-216.alpha.cai-image-with-caption.columns.large-3.three", style: "width: px;", =>
       T.img border: "0", alt: "", src: "/files/4913/9288/5912/IMG_0725.jpg", width: "200", height: "268"
       T.br()
       T.span ".cai-caption", => T.raw "Snow appears directly on the surface!"
@@ -93,5 +105,3 @@ And if Bamboo Snow really can help water conservation and human sanitation aroun
   # 
   # section rcID
   # 
-allMeta = [[["http-equiv","content-type"],["content","text/html; charset=UTF-8"]],[["name","description"],["content","Home page for Bamboo-Snow.com"]],[["name","generator"],["content","concrete5 - 5.6.3.2"]],[["name","HandheldFriendly"],["content","True"]],[["name","MobileOptimized"],["content","320"]],[["name","viewport"],["content","initial-scale=1, maximum-scale=1"]]]
-htmlTitle = "bamboo can do cooperative :: Bamboo Snow"

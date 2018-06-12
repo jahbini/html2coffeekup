@@ -44,11 +44,10 @@ T.html ->
 html2halvalla [options] <html-file>
 
 --prefix=<string>    Prepends a string to each element function call default 'T.'
---selectors          Output css-selectors for id and classes (default)
---no-selectors       Disables output of css-selectors for id and classes
 --s=slug             creates output directory for contents
 --b=breakoutId       break tag with id to separate havalla source
 --m=matchtext        exact match for text in html -- inserts 'id="b-value' in html tag
+--e=extractList      extract repeated tags by tagname and classname RE -- inserts 'id=b-value_0123455'
 --selfTest           append code to render the halvalla template for test
 ```
 --
@@ -73,19 +72,22 @@ See "Supported options" below for additional details.
 
 > For example, using the prefix `@` would result in `@body ->`.
 
-*  `selectors` is a boolean to toggle emitting classes and ids as a first argument to element functions as a selector string (default: `true`).
 
-> For example, when true you get `div '#id.cls1.cls2`. When false you get `div id: "id", class: "cls1 cls2"`
-
-*  `b` is a string. The HTML tag with that id is directed to a new halvalla source class and file in the slug directory
+*  `b` is a string for the breakoutId. "Break Out" this tag ID element and it's children as a separate file.  The HTML tag with that id is directed to a new halvalla source class and file in the slug directory
 > example '--b=bloviation' will direct a `<tag ID='bloviation' ...`
 to a new file in the slug directory wrapped in a class statement
 
-*  `m` is a string that matches the original html text and inserts an ID into a tag that can only be described by it's actual text of classnames.
+*  `m` is a string that matches the original html text and inserts the breakoutId into a tag that can only be doescribed by it's actual text of classnames.
+>  the output files `test/footer.coffee` and `test/header.coffee` are examples.
 
+*  `e` is a RE of the form 'tagname.*\.class-to-find.*\.find-this-class-too' and inserts the matching
+>  html elements into the Break Out file.  Matched classes will have unique tag names based on the breakoutId.
+>  see the file `test/blov/dicey.coffee` for an example extracted from `test/bs.html`.
+  
 # Example REPL Session
 *  `bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=bloviation --m='div class="large-8 columns"' --s=blov  test/bs.html`
-*  will match the '<header' text in the html and replace it with `<header id="#{option b.value}" <header id=header
-*  this will decode an html file into four separate files named html.coffee, header.coffee, footer.coffee and bloviation.coffee
-*  If the id for 'bloviation' already exists in the html file, the '-m' option is not needed.
+>  Matches the '<header' text in the html and replace it with `<header id="#{option b.value}" <header id=header
+>
+> And will decode an html file into four separate files named html.coffee, header.coffee, footer.coffee and bloviation.coffee
+  (If the id for 'bloviation' already exists in the html file, the '-m' option is not needed.)
 

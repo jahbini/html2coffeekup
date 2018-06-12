@@ -24,9 +24,14 @@ exports.convert = (html, stream, options, callback) ->
   emitting = true
   isEmitting = ->
     emitting
-    
+  #
+  # printBaby is a hash of the IDs that are to be printed or skipped during this pass
+  # 
   printBaby = {}
 
+  # internal curry to set parameters in standard order:
+  #  (html,stream,callback) becomes (html,stream,{},callback)
+  #  (html,stream,options) becomes (html,stream,options, ()-> return)
   if typeof options == 'function'
     [options, callback] = [{}, options]
   if not callback
@@ -38,7 +43,6 @@ exports.convert = (html, stream, options, callback) ->
   sections = {}
   toDo = []
   prefix = options.prefix ? 'T.'
-  selectors = options.selectors ? true
   export_ = options.export ? 'theStory'
   baseClass = options.baseClass 
 
@@ -53,29 +57,36 @@ exports.convert = (html, stream, options, callback) ->
     depth-- if isEmitting()
     result
 
+  # visit defines the tree walk and will start emitting when the node
   visit =
-
+    # vector on node type
     node: (node) ->
       visit[node.type](node)
 
-    namedArray: (id,array) ->
-      idSafe = id.replace /-/g,'_'
-      emit idSafe + ': =>'
-      if array.type
-        nest -> visit.tag array
+    # named with children is one with an ID tag name (real or virtual)
+    # and emits a function definition with named ID
+    namedWithChildren: (id,children) ->
+      idSafe = id.replace /-/g,'_' # ID's in html have - we convert to js legal _
+      emit idSafe + ': =>'  
+      if children.type
+        nest -> visit.tag children
       else
-        nest -> visit.array array
+        nest -> visit.babies children
 
-    array: (array) ->
-      if !array
+    babies: (children) ->
+      if !children
         emit 'return'
         return
-      for node in array
+      for node in children
         visit.node node
 
     tag: (tag,debug = false) ->
+      #accumulate emitted string in code variable
+      # compute the signature, attributes, and children for
+      # emitting and tree walk
       code = prefix + tag.name
       called = false
+      signature = tag.name
 
       # Force attribute ordering of `id`, `class`, then others.
       attribs = []
@@ -87,18 +98,19 @@ exports.convert = (html, stream, options, callback) ->
         extractAttrib = (key) ->
           value = tAttribs[key]
           if value
-            attribs.push [key, value] unless selectors
             delete tAttribs[key]
           value
+          
         id = extractAttrib 'id'
         cls = extractAttrib 'class'
-        if selectors and (id or cls)
+        if id or cls
           selector = ''
           selector += "##{id}" if id
           if cls
             # remove duplicate class names
-            cls=_(cls.split(' ')).uniq().join ' '
+            cls=_.chain(cls.split(' ')).sortBy().uniq().value().join ' '
             selector += ".#{cls.replace(/ /g, '.')}"
+            signature += ".#{cls.replace(/ /g, '.')}"
           code += " \"#{selector}\""
           called = true
         for key, value of tAttribs
@@ -116,6 +128,17 @@ exports.convert = (html, stream, options, callback) ->
       code += attribs.join(',')
       called ||= attribs.length > 0
       
+      unless id 
+        for e in options.expanders
+          if signature.match e.search
+            #console.log "new E",e, options.expanders,tag
+            tag.attribs.id= id = e.repl+'_'+e.count
+            printBaby[id] = options.doMe == e.repl
+            options.doThese.push id
+            #console.log "Match on",id ,tag
+            e.count++
+            break
+          
       # Render content
       endTag = (suffix) =>
         if suffix
@@ -144,7 +167,7 @@ exports.convert = (html, stream, options, callback) ->
             htmlTitle = stringLiteral child if tag.name == 'title'
         else
           endTag ' =>'
-          nest -> visit.array children
+          nest -> visit.babies children
       else if called
         endTag()
       else
@@ -196,7 +219,7 @@ exports.convert = (html, stream, options, callback) ->
         emit "# "
         emitting = printBaby[sectionName]  # turn code emission on
         #console.log "SECTION",sectionName, printBaby
-        visit.namedArray sectionName, sections[sectionName]
+        visit.namedWithChildren sectionName, sections[sectionName]
           
       #wrap up
       emitting = true

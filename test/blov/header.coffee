@@ -10,6 +10,18 @@ renderer = class C_header extends C_html
   # section footer
   # 
   # 
+  # section dicey_3
+  # 
+  # 
+  # section dicey_2
+  # 
+  # 
+  # section dicey_1
+  # 
+  # 
+  # section dicey_0
+  # 
+  # 
   # section blovi-ation
   # 
   # 
@@ -21,7 +33,7 @@ renderer = class C_header extends C_html
   header: =>
     T.header "#header", =>
       T.div ".row", =>
-        T.div ".large-12.columns", =>
+        T.div ".columns.large-12", =>
           T.img ".ccm-image-block", border: "0", alt: "", src: "/files/4014/0709/8794/Photos_-_345.jpg", width: "4464", height: "544"
           T.script src: "/packages/theme_hi_vis/blocks/fullscreen_background/vegas/jquery.vegas.min.js"
           T.link rel: "stylesheet", type: "text/css", href: "/packages/theme_hi_vis/blocks/fullscreen_background/vegas/jquery.vegas.css"
@@ -50,11 +62,11 @@ $(function() {
   # 
   badclass: =>
     T.div "#badclass.-bad-bad-badrow.nav-container", =>
-      T.div ".large12.columns", =>
-        T.nav ".top-bar.contain-to-grid.centered", "data-topbar": "data-topbar", =>
+      T.div ".columns.large12", =>
+        T.nav ".centered.contain-to-grid.top-bar", "data-topbar": "data-topbar", =>
           T.ul ".title-area", =>
             T.li ".name"
-            T.li ".toggle-topbar.menu-icon", =>
+            T.li ".menu-icon.toggle-topbar", =>
               T.a href: "#", =>
                 T.span => T.raw "Menu"
           T.section ".top-bar-section", =>

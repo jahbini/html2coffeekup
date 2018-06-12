@@ -80,35 +80,27 @@ $(document).foundation({
       @header()
       T.comment 'End Header and Nav'
       T.comment 'content starts'
-      T.div ".row.content", =>
-        T.div ".large-12.columns", =>
+      T.div ".content.row", =>
+        T.div ".columns.large-12", =>
           T.ul ".breadcrumbs", =>
             T.li =>
               T.a ".crumb", href: "/", target: "_self", => T.raw "Home"
             T.li => T.raw "Bamboo Snow"
         @blovi_ation()
-        T.div ".large-4.columns.sidebar", =>
+        T.div ".columns.large-4.sidebar", =>
           T.div ".ccm-page-list", =>
             T.h3 ".ccm-page-list-title", =>
               T.a href: "/bamboo-snow/greater-life/", target: "_self", => T.raw "The Greater Life"
-            T.div ".ccm-page-list-description", => T.raw """
-The good life/ greater life manifesto
-"""
+            @dicey_0()
             T.h3 ".ccm-page-list-title", =>
               T.a href: "/bamboo-snow/true-confessions/", target: "_self", => T.raw "True Confessions"
-            T.div ".ccm-page-list-description", => T.raw """
-Things I have observed or done with bamboo or Golden Bamboo Snow
-"""
+            @dicey_1()
             T.h3 ".ccm-page-list-title", =>
               T.a href: "/bamboo-snow/faq/", target: "_self", => T.raw "FAQ"
-            T.div ".ccm-page-list-description", => T.raw """
-Frequently asked Questions
-"""
+            @dicey_2()
             T.h3 ".ccm-page-list-title", =>
               T.a href: "/bamboo-snow/news/", target: "_self", => T.raw "News"
-            T.div ".ccm-page-list-description", => T.raw """
-news about bamboo in the CNMI
-"""
+            @dicey_3()
           T.comment 'end .ccm-page-list'
       T.comment 'contents end here'
       T.comment 'Footer'
@@ -117,6 +109,18 @@ news about bamboo in the CNMI
         T.p ".right", => T.raw "&copy; 2018 bamboo can do cooperative."
   # 
   # section footer
+  # 
+  # 
+  # section dicey_3
+  # 
+  # 
+  # section dicey_2
+  # 
+  # 
+  # section dicey_1
+  # 
+  # 
+  # section dicey_0
   # 
   # 
   # section blovi-ation

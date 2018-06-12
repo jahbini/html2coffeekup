@@ -12,15 +12,27 @@ renderer = class C_footer extends C_header
   footer: =>
     T.footer "#footer", =>
       T.div ".row", =>
-        T.div ".large-4.columns", => T.raw """
+        T.div ".columns.large-4", => T.raw """
 
 """
-        T.div ".large-4.columns", => T.raw """
+        T.div ".columns.large-4", => T.raw """
 
 """
-        T.div ".large-4.columns", => T.raw """
+        T.div ".columns.large-4", => T.raw """
 
 """
+  # 
+  # section dicey_3
+  # 
+  # 
+  # section dicey_2
+  # 
+  # 
+  # section dicey_1
+  # 
+  # 
+  # section dicey_0
+  # 
   # 
   # section blovi-ation
   # 

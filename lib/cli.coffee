@@ -15,13 +15,12 @@ exports.main = ->
 
         --prefix=<string>   Prepends a string to each element function call
         --no-prefix         Disables prefix (default)
-        --selectors         Output css-selectors for id and classes (default)
-        --no-selectors      Disables output of css-selectors for id and classes
         --export[=<name>]   Wraps the output in a Node.js style export
         --no-export         Disables wrapping the output in an export (default)
         --extends=<name>    sets base class or extends base class
         --b=name            breakout subsection as new class, may be repeated
         --m=string          matches exact text in source tag to add --b ID to tag
+        --e='tagname.*\.class.*.next-class'    regular expression that generates multiple labels
         --s=slug            name the output directory
         --selfTest          append code to render the halvalla template for test
     """
@@ -29,9 +28,9 @@ exports.main = ->
 
   prefix = 'T.'
   export_ = null
-  selectors = null
   sourceFile = null
   matchers = []
+  expanders = []
   baseClass = ""
   doThese = ['html']
   slug = 'subdirectory'
@@ -63,15 +62,12 @@ exports.main = ->
         when 'm'
           requireValue()
           matchers.push search: value, repl: doThese[doThese.length-1]
+        when 'e'
+          requireValue()
+          expanders.push search: value, repl: doThese[doThese.length-1], count:0
         when 'prefix'
           requireValue()
           prefix = value
-        when 'selectors'
-          rejectValue()
-          selectors = true
-        when 'no-selectors'
-          rejectValue()
-          selectors = false
         when 'extends'
           baseClass = value
         when 'slug'
@@ -96,7 +92,7 @@ exports.main = ->
   html = fs.readFileSync sourceFile, 'utf8'
   for replacer in matchers
     html = html.replace replacer.search, "#{replacer.search} id=#{replacer.repl}" 
-  options = {prefix, selectors, export: export_, doThese, baseClass, slug: slug }
+  options = {prefix, expanders,  export: export_, doThese, baseClass, slug: slug }
   if options.slug
     try
       fs.mkdirSync options.slug
@@ -105,6 +101,8 @@ exports.main = ->
   outputStream = null
   options.baseClass = ""
   for itemIn in doThese
+    for e in options.expanders
+      e.count = 0
     options.doMe = itemIn
     options.export = "C_#{itemIn}"
     outputStream.end() if outputStream != null
