@@ -2,6 +2,9 @@
 #
 _ = require 'underscore'
 htmlparser = require 'htmlparser'
+halvalla = require 'halvalla'
+htmlTags = require 'halvalla/lib/html-tags.js'
+allTags = htmlTags.allTags
 
 stringLiteral = (html) ->
   hasNewline = !!html.match '\n'
@@ -84,13 +87,18 @@ exports.convert = (html, stream, options, callback) ->
       #accumulate emitted string in code variable
       # compute the signature, attributes, and children for
       # emitting and tree walk
-      code = prefix + tag.name
-      called = false
+      lineUp = []
+      if allTags[tag.name]
+        code = prefix + tag.name
+      else
+        code = prefix + "tag "
+        lineUp.push "\"#{tag.name}\"" 
       signature = tag.name
 
       # Force attribute ordering of `id`, `class`, then others.
       attribs = []
       
+      selector = ''
       if tag.attribs?
         tAttribs = {}
         for key,value of tag.attribs
@@ -103,16 +111,20 @@ exports.convert = (html, stream, options, callback) ->
           
         id = extractAttrib 'id'
         cls = extractAttrib 'class'
-        if id or cls
-          selector = ''
+        cl2 = extractAttrib 'className'
+        if cls && cl2
+          cls = [cls...,'jimbo', cl2...]
+        if !cls && cl2
+          cls = cl2
+        if id or cls or selector
           selector += "##{id}" if id
           if cls
             # remove duplicate class names
             cls=_.chain(cls.split(' ')).sortBy().uniq().value().join ' '
             selector += ".#{cls.replace(/ /g, '.')}"
             signature += ".#{cls.replace(/ /g, '.')}"
-          code += " \"#{selector}\""
-          called = true
+
+          lineUp.push " \"#{selector}\""
         for key, value of tAttribs
           attribs.push [key, value]
 
@@ -120,13 +132,10 @@ exports.convert = (html, stream, options, callback) ->
       allMeta.push attribs if tag.name == 'meta'
 
       # Render attributes
-      attribs = for [key, value] in attribs
+      for [key, value] in attribs
         key = '"'+ key + '"' if key.match '-'
-        " #{key}: #{stringLiteral value}"
+        lineUp.push " #{key}: #{stringLiteral value}"
 
-      code += ',' if selector && attribs.length > 0 
-      code += attribs.join(',')
-      called ||= attribs.length > 0
       
       unless id 
         for e in options.expanders
@@ -141,10 +150,11 @@ exports.convert = (html, stream, options, callback) ->
           
       # Render content
       endTag = (suffix) =>
-        if suffix
-          code += ',' if called
-          code += suffix
-        emit code
+        lineUp.push suffix if suffix
+        lineUp.push '()' if lineUp.length == 0
+        emit code + lineUp.join ','
+        return
+
       if id
         idSafe = id.replace /-/g,'_'
         if id != sectionName
@@ -163,15 +173,13 @@ exports.convert = (html, stream, options, callback) ->
           if tag.name == 'script'
             endTag " #{stringLiteral child.replace /"/g,'\\"'}"
           else
-            endTag " => T.raw #{stringLiteral child}"
+            endTag " => #{prefix}raw #{stringLiteral child}"
             htmlTitle = stringLiteral child if tag.name == 'title'
         else
           endTag ' =>'
           nest -> visit.babies children
-      else if called
+      else 
         endTag()
-      else
-        endTag('()')
 
     text: (text) ->
       return if text.data.match /^\s*$/

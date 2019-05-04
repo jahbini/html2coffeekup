@@ -19,6 +19,7 @@ module.exports = class C_html
       T.comment '<![endif]'
       T.head =>
         T.meta "http-equiv": "content-type", content: "text/html; charset=UTF-8"
+        T.tag "futag", "http-equiv": "content-type", content: "text/html; charset=UTF-8"
         T.title => T.raw "bamboo can do cooperative :: Bamboo Snow"
         T.meta name: "description", content: "Home page for Bamboo-Snow.com"
         T.meta name: "generator", content: "concrete5 - 5.6.3.2"
@@ -61,6 +62,11 @@ var CCM_REL = \"\";
 """
       T.body =>
         @page()
+        T.comment 'contents end here'
+        T.comment 'Footer'
+        @footer()
+        T.div ".row", =>
+          T.p ".right", => T.raw "&copy; 2018 bamboo can do cooperative."
         T.script src: "/themes/hi_vis/js/vendor/fastclick.js"
         T.script src: "/themes/hi_vis/js/foundation.min.js"
         T.script """
@@ -71,6 +77,9 @@ $(document).foundation({
     }
   });
 """
+  # 
+  # section footer
+  # 
   # 
   # section page
   # 
@@ -87,29 +96,21 @@ $(document).foundation({
               T.a ".crumb", href: "/", target: "_self", => T.raw "Home"
             T.li => T.raw "Bamboo Snow"
         @blovi_ation()
-        T.div ".columns.large-4.sidebar", =>
-          T.div ".ccm-page-list", =>
-            T.h3 ".ccm-page-list-title", =>
-              T.a href: "/bamboo-snow/greater-life/", target: "_self", => T.raw "The Greater Life"
-            @dicey_0()
-            T.h3 ".ccm-page-list-title", =>
-              T.a href: "/bamboo-snow/true-confessions/", target: "_self", => T.raw "True Confessions"
-            @dicey_1()
-            T.h3 ".ccm-page-list-title", =>
-              T.a href: "/bamboo-snow/faq/", target: "_self", => T.raw "FAQ"
-            @dicey_2()
-            T.h3 ".ccm-page-list-title", =>
-              T.a href: "/bamboo-snow/news/", target: "_self", => T.raw "News"
-            @dicey_3()
-          T.comment 'end .ccm-page-list'
-      T.comment 'contents end here'
-      T.comment 'Footer'
-      @footer()
-      T.div ".row", =>
-        T.p ".right", => T.raw "&copy; 2018 bamboo can do cooperative."
-  # 
-  # section footer
-  # 
+      T.div ".columns.large-4.sidebar", =>
+        T.div ".ccm-page-list", =>
+          T.h3 ".ccm-page-list-title", =>
+            T.a href: "/bamboo-snow/greater-life/", target: "_self", => T.raw "The Greater Life"
+          @dicey_0()
+          T.h3 ".ccm-page-list-title", =>
+            T.a href: "/bamboo-snow/true-confessions/", target: "_self", => T.raw "True Confessions"
+          @dicey_1()
+          T.h3 ".ccm-page-list-title", =>
+            T.a href: "/bamboo-snow/faq/", target: "_self", => T.raw "FAQ"
+          @dicey_2()
+          T.h3 ".ccm-page-list-title", =>
+            T.a href: "/bamboo-snow/news/", target: "_self", => T.raw "News"
+          @dicey_3()
+        T.comment 'end .ccm-page-list'
   # 
   # section dicey_3
   # 

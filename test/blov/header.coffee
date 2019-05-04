@@ -4,10 +4,10 @@ renderer = class C_header extends C_html
   # section html
   # 
   # 
-  # section page
-  # 
-  # 
   # section footer
+  # 
+  # 
+  # section page
   # 
   # 
   # section dicey_3

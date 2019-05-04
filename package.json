@@ -18,12 +18,14 @@
     "html2halvalla": "./bin/html2halvalla"
   },
   "scripts": {
-    "decode": "rm -rf test/blov; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=blovi-ation --m='div class=\"large-8 columns\"' --b=dicey --e='div.ccm-page-list-description' --s=test/blov  test/bs.html"
+    "test-blov": "rm -rf test/blov; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=blovi-ation --m='div class=\"large-8 columns\"' --b=dicey --e='div.ccm-page-list-description' --s=test/blov  test/bs.html",
+    "test-component": "rm -rf test/component; bin/html2halvalla --b=header --m='<header' --b=footer --m='<footer' --b=blovi-ation --m='div class=\"large-8 columns\"' --b=dicey --e='div.ccm-page-list-description' --s=test/component  test/component.html"
   },
   "main": "./lib/convert.coffee",
   "dependencies": {
     "coffee-script": ">= 1.1.1",
     "htmlparser": ">= 1.7.3",
+    "halvalla": "latest",
     "underscore": "^1.8.3"
   },
   "engines": {

@@ -4,10 +4,10 @@ renderer = class C_blovi-ation extends C_footer
   # section html
   # 
   # 
-  # section page
-  # 
-  # 
   # section footer
+  # 
+  # 
+  # section page
   # 
   # 
   # section dicey_3
@@ -26,7 +26,8 @@ renderer = class C_blovi-ation extends C_footer
   # 
   blovi_ation: =>
     T.div "#blovi-ation.columns.large-8", =>
-      T.div ".row", =>
+      T.tag "division", ".row", =>
+        T.tag "forq"
         @cai_image_with_caption_216()
         T.div "..omega", =>
           T.p => T.raw "Bamboo Snow is a&nbsp;discovery of monumental implications: it is a new Honey, a new Silk.&nbsp;An insect produced commodity, with practical, sustainable uses that stagger the imagination.&nbsp;It even makes your drains run cleaner."

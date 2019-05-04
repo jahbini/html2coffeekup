@@ -4,9 +4,6 @@ renderer = class C_footer extends C_header
   # section html
   # 
   # 
-  # section page
-  # 
-  # 
   # section footer
   # 
   footer: =>
@@ -21,6 +18,9 @@ renderer = class C_footer extends C_header
         T.div ".columns.large-4", => T.raw """
 
 """
+  # 
+  # section page
+  # 
   # 
   # section dicey_3
   # 

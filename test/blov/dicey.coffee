@@ -4,10 +4,10 @@ renderer = class C_dicey extends C_blovi-ation
   # section html
   # 
   # 
-  # section page
-  # 
-  # 
   # section footer
+  # 
+  # 
+  # section page
   # 
   # 
   # section dicey_3
