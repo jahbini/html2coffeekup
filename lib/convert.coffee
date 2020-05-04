@@ -1,10 +1,13 @@
 # extract html generating teacup signatures for web site bamboosnow.com
 #
 _ = require 'underscore'
-htmlparser = require 'htmlparser'
+htmlparser = require 'htmlparser2'
 halvalla = require 'halvalla'
 htmlTags = require 'halvalla/lib/html-tags.js'
 allTags = htmlTags.allTags
+
+safeId = (id)->
+ id.replace /-/g,'_' # ID's in html have - we convert to js legal _
 
 stringLiteral = (html) ->
   hasNewline = !!html.match '\n'
@@ -46,7 +49,7 @@ exports.convert = (html, stream, options, callback) ->
   sections = {}
   toDo = []
   prefix = options.prefix ? 'T.'
-  export_ = options.export ? 'theStory'
+  export_ = safeId options.export ? 'theStory'
   baseClass = options.baseClass 
 
   depth = 0
