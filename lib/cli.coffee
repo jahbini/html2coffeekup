@@ -90,6 +90,7 @@ exports.main = ->
     usage()
 
   html = fs.readFileSync sourceFile, 'utf8'
+  # take care of --e expansions
   for replacer in matchers
     html = html.replace replacer.search, "#{replacer.search} id=#{replacer.repl}" 
   options = {prefix, expanders,  export: export_, doThese, baseClass, slug: slug }
@@ -104,7 +105,7 @@ exports.main = ->
     for e in options.expanders
       e.count = 0
     options.doMe = itemIn
-    options.export = "C_#{itemIn}"
+    options.export = "C_#{(itemIn.split ',')[0]}"
     outputStream.end() if outputStream != null
     outputStream = fs.createWriteStream "./#{options.slug}/#{itemIn}.coffee"
     convert html, outputStream, options, (err) ->

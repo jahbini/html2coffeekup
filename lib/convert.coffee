@@ -220,7 +220,9 @@ exports.convert = (html, stream, options, callback) ->
       emit "renderer = class #{export_} extends #{baseClass}"
     for noPrint in options.doThese
       printBaby[noPrint] = false
-    printBaby[options.doMe]=true
+    # take all ID's in doMe and print them during this pass
+    for printIt in options.doMe.split ','
+      printBaby[options.printIt]=true
     depth = 1
     try
       while sectionName = toDo.pop()
