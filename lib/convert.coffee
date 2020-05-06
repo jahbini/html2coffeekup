@@ -34,6 +34,8 @@ exports.convert = (html, stream, options, callback) ->
   # printBaby is a hash of the IDs that are to be printed or skipped during this pass
   # 
   printBaby = {}
+  #printNot is the expanded form of printThese
+  printNot = []
 
   # internal curry to set parameters in standard order:
   #  (html,stream,callback) becomes (html,stream,{},callback)
@@ -147,7 +149,6 @@ exports.convert = (html, stream, options, callback) ->
             tag.attribs.id= id = e.repl+'_'+e.count
             printBaby[id] = options.doMe == e.repl
             options.doThese.push id
-            #console.log "Match on",id ,tag
             e.count++
             break
           
@@ -167,7 +168,7 @@ exports.convert = (html, stream, options, callback) ->
           #console.log "PUSHING",id, "Emitting = ",isEmitting()
           #pass the print enable on, unless this section is specifically optioned
           # in that case, we are already printing it, or we should not during this pass
-          printBaby[id] = isEmitting() unless id in options.doThese
+          printBaby[id] = isEmitting() unless id in printNot
           return
 
       if (children = tag.children)?
@@ -179,8 +180,11 @@ exports.convert = (html, stream, options, callback) ->
             endTag " => #{prefix}raw #{stringLiteral child}"
             htmlTitle = stringLiteral child if tag.name == 'title'
         else
-          endTag ' =>'
-          nest -> visit.babies children
+          if children.length >0
+            endTag ' =>'
+            nest -> visit.babies children
+          else
+            endTag()
       else 
         endTag()
 
@@ -219,19 +223,26 @@ exports.convert = (html, stream, options, callback) ->
       # assume the concatenation of coffee-script input so baseClass is defined
       emit "renderer = class #{export_} extends #{baseClass}"
     for noPrint in options.doThese
-      printBaby[noPrint] = false
+      for nope in noPrint.split ','
+        #console.log "Not Printing",nope
+        printBaby[nope] = false
+        printNot.push nope
     # take all ID's in doMe and print them during this pass
     for printIt in options.doMe.split ','
-      printBaby[options.printIt]=true
+      #console.log "Yes Printing",printIt
+      printBaby[printIt]=true
     depth = 1
+    #console.log "Printbaby",printBaby
     try
       while sectionName = toDo.pop()
+        #console.log "Pass to print section",sectionName
         emitting=true
         emit "# "
         emit "# section #{sectionName}"
         emit "# "
+        emit "# emitting=",printBaby[sectionName]
         emitting = printBaby[sectionName]  # turn code emission on
-        #console.log "SECTION",sectionName, printBaby
+        #console.log "SECTION",sectionName, printBaby[sectionName]
         visit.namedWithChildren sectionName, sections[sectionName]
           
       #wrap up

@@ -105,16 +105,17 @@ exports.main = ->
     for e in options.expanders
       e.count = 0
     options.doMe = itemIn
-    options.export = "C_#{(itemIn.split ',')[0]}"
+    fileName=(itemIn.split ',')[0]
+    options.export = "C_#{fileName}"
     outputStream.end() if outputStream != null
-    outputStream = fs.createWriteStream "./#{options.slug}/#{itemIn}.coffee"
+    outputStream = fs.createWriteStream "./#{options.slug}/#{fileName}.coffee"
     convert html, outputStream, options, (err) ->
       console.error err if err
     options.baseClass = options.export
   outputStream.write "allMeta = #{JSON.stringify options.allMeta}\n"
   outputStream.write "htmlTitle = #{options.htmlTitle}\n"
   if selfTest
-    outputStream.write "page = new module.exports\n"
-    outputStream.write "console.log T.render page.html"
+    outputStream.write "page = new renderer\n"
+    outputStream.write "console.log T.render page.html()"
   outputStream.end()
   
