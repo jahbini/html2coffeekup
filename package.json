@@ -3,7 +3,7 @@
   "description": "Converts HTML to halvalla markup",
   "author": "James Hinds <jahbini@icloud.com>",
   "contributors": "Brandon Bloom <brandon@brandonbloom.name>",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/jahbini/html2halvalla.git"
