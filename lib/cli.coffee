@@ -100,22 +100,27 @@ exports.main = ->
     catch badDog
       #console.error "BADDOG",badDog
   outputStream = null
-  options.baseClass = ""
+  #options.baseClass = ""
   for itemIn in doThese
     for e in options.expanders
       e.count = 0
     options.doMe = itemIn
     fileName=(itemIn.split ',')[0]
-    options.export = "C_#{fileName}"
+    options.export_ = "C_#{fileName}"
+    options.entryPoint = fileName
     outputStream.end() if outputStream != null
     outputStream = fs.createWriteStream "./#{options.slug}/#{fileName}.coffee"
     convert html, outputStream, options, (err) ->
       console.error err if err
-    options.baseClass = options.export
-  outputStream.write "allMeta = #{JSON.stringify options.allMeta}\n"
-  outputStream.write "htmlTitle = #{options.htmlTitle}\n"
-  if selfTest
-    outputStream.write "page = new renderer\n"
-    outputStream.write "console.log T.render page.html()"
-  outputStream.end()
+    #options.baseClass = options.export
+    outputStream.write "allMeta = #{JSON.stringify options.allMeta}\n"
+    outputStream.write "htmlTitle = #{options.htmlTitle}\n"
+    if !options.export
+      outputStream.write """
+module.exports.default = (new module.exports()).#{fileName}
+    """
+    if selfTest
+      outputStream.write "page = new renderer\n"
+      outputStream.write "console.log T.render page.html()"
+    outputStream.end()
   

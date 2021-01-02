@@ -13,11 +13,12 @@ stringLiteral = (html) ->
   hasNewline = !!html.match '\n'
   hasSingleQuotes = !!html.match "'"
   hasDoubleQuotes = !!html.match '"'
+  trimmed=html.trim() || ' '
   
   if hasNewline || hasDoubleQuotes || hasSingleQuotes
-    '"""\n' + html.trim() + '\n"""'
+    '"""\n' + trimmed + '\n"""'
   else
-    '"' + html.trim() + '"'
+    '"' + trimmed + '"'
     
 # for strings in comments that have executable code with unescaped quotes
 stringLiteral2 = (html) ->
@@ -51,9 +52,8 @@ exports.convert = (html, stream, options, callback) ->
   sections = {}
   toDo = []
   prefix = options.prefix ? 'T.'
-  export_ = safeId options.export ? 'theStory'
+  export_ = safeId options.export || 'theStory'
   baseClass = options.baseClass 
-
   depth = 0
 
   emit = (code) ->
@@ -93,7 +93,9 @@ exports.convert = (html, stream, options, callback) ->
       # compute the signature, attributes, and children for
       # emitting and tree walk
       lineUp = []
-      if allTags[tag.name]
+      # the 'use' tag is a valid svg tag so don't use the intenal Teacup semantics
+      # just ask for the explicit tag
+      if tag.name != 'use' && allTags[tag.name]
         code = prefix + tag.name
       else
         code = prefix + "tag "
@@ -240,7 +242,6 @@ exports.convert = (html, stream, options, callback) ->
         emit "# "
         emit "# section #{sectionName}"
         emit "# "
-        emit "# emitting=",printBaby[sectionName]
         emitting = printBaby[sectionName]  # turn code emission on
         #console.log "SECTION",sectionName, printBaby[sectionName]
         visit.namedWithChildren sectionName, sections[sectionName]
