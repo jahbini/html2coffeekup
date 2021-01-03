@@ -13,9 +13,10 @@ stringLiteral = (html) ->
   hasNewline = !!html.match '\n'
   hasSingleQuotes = !!html.match "'"
   hasDoubleQuotes = !!html.match '"'
-  trimmed=html.trim() || ' '
+  trimmed=html.trim()
+  trimmed = ' ' if !trimmed
   
-  if hasNewline || hasDoubleQuotes || hasSingleQuotes
+  if hasNewline || hasDoubleQuotes
     '"""\n' + trimmed + '\n"""'
   else
     '"' + trimmed + '"'
