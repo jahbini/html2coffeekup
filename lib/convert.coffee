@@ -5,17 +5,25 @@ htmlparser = require 'htmlparser2'
 halvalla = require 'halvalla'
 htmlTags = require 'halvalla/lib/html-tags.js'
 allTags = htmlTags.allTags
+noTextCleanUp = false
 
 safeId = (id)->
  id.replace /-/g,'_' # ID's in html have - we convert to js legal _
 
+escape= (text) ->
+  text.toString().replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+
 stringLiteral = (html) ->
+  html=escape html
   hasNewline = !!html.match '\n'
   hasSingleQuotes = !!html.match "'"
   hasDoubleQuotes = !!html.match '"'
-  trimmed=html.trim()
+  html.replace /\ \ /g,' ' unless noTextCleanUp
   html.replace /'/g,"\'" if hasSingleQuotes
-  trimmed = ' ' if !trimmed
+  trimmed = html 
   
   if hasNewline || hasDoubleQuotes
     '"""\n' + trimmed + '\n"""'
@@ -25,10 +33,9 @@ stringLiteral = (html) ->
 # for strings in comments that have executable code with unescaped quotes
 stringLiteral2 = (html) ->
   hasSingleQuotes = !!html.match "'"
-  trimmed=html.trim()
-  html.replace /'/g,"\'" if hasSingleQuotes
-  if !!html.match '\n'
-    '"""\n' + "'"+html.trim()+"'" + '\n"""'
+  hasDoubleQuotes = !!html.match '"'
+  if hasDoubleQuotes || hasSingleQuotes || !!html.match '\n' 
+    '"""\n' + html.trim() + '\n"""'
   else
     "'" + html.trim() + "'"
 
@@ -74,6 +81,8 @@ exports.convert = (html, stream, options, callback) ->
   visit =
     # vector on node type
     node: (node) ->
+      if node.name =='pre'
+        node.type = 'pre'
       visit[node.type](node)
 
     # named with children is one with an ID tag name (real or virtual)
@@ -196,7 +205,8 @@ exports.convert = (html, stream, options, callback) ->
         endTag()
 
     text: (text) ->
-      return if text.data.match /^\s*$/
+      unless noTextCleanUp
+        return if text.data.match /^\s*$/
       emit "#{prefix}raw #{stringLiteral text.data}"
 
     directive: (directive) ->
@@ -207,6 +217,11 @@ exports.convert = (html, stream, options, callback) ->
 
     comment: (comment) ->
       emit "#{prefix}comment #{stringLiteral2 comment.data}"
+
+    pre: (node)->
+      noTextCleanUp = true
+      visit.tag node
+      noTextCleanUp = false
 
     script: (script) ->
       visit.tag script #TODO: Something better
