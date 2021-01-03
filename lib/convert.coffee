@@ -14,6 +14,7 @@ stringLiteral = (html) ->
   hasSingleQuotes = !!html.match "'"
   hasDoubleQuotes = !!html.match '"'
   trimmed=html.trim()
+  html.replace /'/g,"\'" if hasSingleQuotes
   trimmed = ' ' if !trimmed
   
   if hasNewline || hasDoubleQuotes
@@ -23,6 +24,9 @@ stringLiteral = (html) ->
     
 # for strings in comments that have executable code with unescaped quotes
 stringLiteral2 = (html) ->
+  hasSingleQuotes = !!html.match "'"
+  trimmed=html.trim()
+  html.replace /'/g,"\'" if hasSingleQuotes
   if !!html.match '\n'
     '"""\n' + "'"+html.trim()+"'" + '\n"""'
   else

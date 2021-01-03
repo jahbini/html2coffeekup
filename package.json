@@ -23,7 +23,7 @@
   },
   "main": "./lib/convert.coffee",
   "dependencies": {
-    "coffee-script": ">= 1.1.1",
+    "coffeescript": ">= 1.12.7",
     "htmlparser2": "latest",
     "halvalla": "latest",
     "underscore": "^1.8.3"
